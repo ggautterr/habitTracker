@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:habit_tracker/authentication/signup_page.dart';
+import 'package:habit_tracker/models/login_model.dart';
+import 'package:habit_tracker/services/api_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -9,6 +11,43 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  TextEditingController emailController = TextEditingController(
+    text: "user@example.com",
+  );
+  TextEditingController passwordController = TextEditingController(
+    text: "securepassword123",
+  );
+  bool isLoading = false;
+
+  void login() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      final resp = await ApiService().loginPost(
+        LoginModel(
+          email: emailController.text,
+          password: passwordController.text,
+        ),
+      );
+      // emailController.text = resp['token'].toString();
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Text(resp['token'].toString()),
+          );
+        },
+      );
+    } catch (e) {
+      print(e);
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,6 +123,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       TextField(
+                        controller: emailController,
                         onTapOutside: (event) {
                           FocusManager.instance.primaryFocus?.unfocus();
                         },
@@ -130,6 +170,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       TextField(
+                        controller: passwordController,
                         onTapOutside: (event) {
                           FocusManager.instance.primaryFocus?.unfocus();
                         },
@@ -164,7 +205,7 @@ class _LoginPageState extends State<LoginPage> {
             Padding(
               padding: const EdgeInsets.fromLTRB(40, 50, 40, 60),
               child: TextButton(
-                onPressed: () {},
+                onPressed: login,
                 style: TextButton.styleFrom(
                   backgroundColor: Color.fromRGBO(255, 92, 0, 1),
                   shape: RoundedRectangleBorder(
@@ -176,15 +217,23 @@ class _LoginPageState extends State<LoginPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      "Log In",
-                      style: TextStyle(
-                        fontFamily: "Nunito",
-                        fontSize: 14,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
-                      ),
-                    ),
+                    isLoading
+                        ? CircularProgressIndicator(
+                          color: Colors.white,
+                          constraints: BoxConstraints(
+                            minHeight: 20,
+                            minWidth: 20,
+                          ),
+                        )
+                        : Text(
+                          "Log In",
+                          style: TextStyle(
+                            fontFamily: "Nunito",
+                            fontSize: 14,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                          ),
+                        ),
                   ],
                 ),
               ),

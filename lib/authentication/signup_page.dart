@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:habit_tracker/authentication/login_page.dart';
+import 'package:habit_tracker/models/login_model.dart';
+import 'package:habit_tracker/services/api_service.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -9,6 +11,31 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
+  TextEditingController emailController = TextEditingController(
+    text: "user@example.com",
+  );
+  TextEditingController passController = TextEditingController(
+    text: "securepassword123",
+  );
+
+  bool isLoading = false;
+
+  void signup() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      await ApiService().signupPost(
+        LoginModel(email: emailController.text, password: passController.text),
+      );
+    } catch (e) {
+      print(e);
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -130,6 +157,7 @@ class _SignupPageState extends State<SignupPage> {
                         ),
                       ),
                       TextField(
+                        controller: emailController,
                         onTapOutside: (event) {
                           FocusManager.instance.primaryFocus?.unfocus();
                         },
@@ -176,6 +204,7 @@ class _SignupPageState extends State<SignupPage> {
                         ),
                       ),
                       TextField(
+                        controller: passController,
                         onTapOutside: (event) {
                           FocusManager.instance.primaryFocus?.unfocus();
                         },
@@ -256,7 +285,7 @@ class _SignupPageState extends State<SignupPage> {
             Padding(
               padding: const EdgeInsets.fromLTRB(40, 50, 40, 60),
               child: TextButton(
-                onPressed: () {},
+                onPressed: signup,
                 style: TextButton.styleFrom(
                   backgroundColor: Color.fromRGBO(255, 92, 0, 1),
                   shape: RoundedRectangleBorder(
@@ -268,15 +297,23 @@ class _SignupPageState extends State<SignupPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      "Sign Up",
-                      style: TextStyle(
-                        fontFamily: "Nunito",
-                        fontSize: 14,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
-                      ),
-                    ),
+                    isLoading
+                        ? CircularProgressIndicator(
+                          color: Colors.white,
+                          constraints: BoxConstraints(
+                            minHeight: 20,
+                            minWidth: 20,
+                          ),
+                        )
+                        : Text(
+                          "Sign Up",
+                          style: TextStyle(
+                            fontFamily: "Nunito",
+                            fontSize: 14,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                          ),
+                        ),
                   ],
                 ),
               ),
