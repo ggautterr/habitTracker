@@ -23,6 +23,7 @@ flutter:
 
   assets: 
     - assets/images/
+    - assets/images/home_page/
 
   fonts: 
     - family: Nunito
