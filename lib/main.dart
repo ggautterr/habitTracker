@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:habit_tracker/pages/home_page.dart';
+import 'package:habit_tracker/routes/app_routes.dart';
 
 void main() {
   runApp(const MainApp());
@@ -10,9 +10,10 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      initialRoute: '/',
+      onGenerateRoute: (settings) => AppRoutes .generateRoute(settings),
     );
   }
 }

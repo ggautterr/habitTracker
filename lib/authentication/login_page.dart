@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:habit_tracker/authentication/signup_page.dart';
-import 'package:habit_tracker/models/login_model.dart';
+import 'package:habit_tracker/models/signup_login_model.dart';
+import 'package:habit_tracker/pages/home_page.dart';
+import 'package:habit_tracker/routes/app_pages.dart';
 import 'package:habit_tracker/services/api_service.dart';
 
 class LoginPage extends StatefulWidget {
@@ -12,10 +14,10 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   TextEditingController emailController = TextEditingController(
-    text: "user@example.com",
+    text: "ggautterr@gmail.com",
   );
   TextEditingController passwordController = TextEditingController(
-    text: "securepassword123",
+    text: "ggautterr123",
   );
   bool isLoading = false;
 
@@ -24,21 +26,27 @@ class _LoginPageState extends State<LoginPage> {
       isLoading = true;
     });
     try {
-      final resp = await ApiService().loginPost(
-        LoginModel(
+      await ApiService().loginPost(
+        SignupLoginModel(
           email: emailController.text,
           password: passwordController.text,
         ),
       );
-      // emailController.text = resp['token'].toString();
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            content: Text(resp['token'].toString()),
-          );
-        },
-      );
+      if (!mounted) {
+        print('error');
+      } else {
+        // print('mounted');
+        await Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+        // showDialog(
+        //   context: context,
+        //   builder: (context) {
+        //     return AlertDialog(content: Text(resp.toString()));
+        //   },
+        // );
+      }
     } catch (e) {
       print(e);
     }
@@ -74,9 +82,9 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   TextButton.icon(
                     onPressed: () {
-                      Navigator.pushReplacement(
+                      Navigator.pushReplacementNamed(
                         context,
-                        MaterialPageRoute(builder: (context) => SignupPage()),
+                        AppPages.signup
                       );
                     },
                     label: Text(

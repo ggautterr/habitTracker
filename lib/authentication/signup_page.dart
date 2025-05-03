@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:habit_tracker/authentication/login_page.dart';
-import 'package:habit_tracker/models/login_model.dart';
+import 'package:habit_tracker/models/signup_login_model.dart';
+import 'package:habit_tracker/routes/app_pages.dart';
 import 'package:habit_tracker/services/api_service.dart';
 
 class SignupPage extends StatefulWidget {
@@ -12,10 +13,10 @@ class SignupPage extends StatefulWidget {
 
 class _SignupPageState extends State<SignupPage> {
   TextEditingController emailController = TextEditingController(
-    text: "user@example.com",
+    text: "",
   );
   TextEditingController passController = TextEditingController(
-    text: "securepassword123",
+    text: "",
   );
 
   bool isLoading = false;
@@ -26,7 +27,7 @@ class _SignupPageState extends State<SignupPage> {
     });
     try {
       await ApiService().signupPost(
-        LoginModel(email: emailController.text, password: passController.text),
+        SignupLoginModel(email: emailController.text, password: passController.text),
       );
     } catch (e) {
       print(e);
@@ -62,9 +63,9 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                   TextButton.icon(
                     onPressed: () {
-                      Navigator.pushReplacement(
+                      Navigator.pushReplacementNamed(
                         context,
-                        MaterialPageRoute(builder: (context) => LoginPage()),
+                        AppPages.login
                       );
                     },
                     label: Text(
